@@ -1,32 +1,24 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 #runTheMatrix step
-#runTheMatrix.py -w upgrade -l 23293.0 -j 0
+#runTheMatrix.py -w upgrade -l 24805.0 -j 0
 #!!!! Edit step2 and step3 config to run all = "-1" events !!!!!!!
 
 #Front of HGCAL
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12345$run -d CloseByPhotons -w 23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/ -o ProdTicl -e /eos/cms/store/user/amagnan/HGCAL/TiCL ; done
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12345$run -d CloseByPhotonsWithPU -w 23493.0_CloseByParticleGun+2026D49PU+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTriggerPU+RecoGlobalPU+HARVESTGlobalPU/ --skip-step1 --config2=step2_DIGI_L1TrackTrigger_L1_DIGI2RAW_HLT_PU.py --config3=step3_RAW2DIGI_L1Reco_RECO_RECOSIM_PAT_VALIDATION_DQM_PU.py -o ProdTicl -E /eos/cms/store/user/amagnan/HGCAL/TiCL/CloseByPhotons -e /eos/cms/store/user/amagnan/HGCAL/TiCL ; done
-#from Vtx
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12346$run -d CloseByPhotonsFromVtx -w 23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/ --config1=CloseByParticle_Photon_ERZRanges_from0_cfi_GEN_SIM.py -o ProdTicl -e /eos/cms/store/user/amagnan/HGCAL/TiCL ; done
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12346$run -d CloseByPhotonsFromVtxWithPU -w 23493.0_CloseByParticleGun+2026D49PU+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTriggerPU+RecoGlobalPU+HARVESTGlobalPU/ --skip-step1 --config2=step2_DIGI_L1TrackTrigger_L1_DIGI2RAW_HLT_PU.py --config3=step3_RAW2DIGI_L1Reco_RECO_RECOSIM_PAT_VALIDATION_DQM_PU.py -o ProdTicl -E /eos/cms/store/user/amagnan/HGCAL/TiCL/CloseByPhotonsFromVtx -e /eos/cms/store/user/amagnan/HGCAL/TiCL ; done
+#for eta in 17 19 21 23 25 27; do
+#for pT in 5 10 20 50 100 150; do python3 submitProdStep.py --nRuns=10 -n 1000 -d SinglePhotons -w 24805.0_SingleGammaPt35+2026D98/ -o ProdTiclv4 -e /eos/cms/store/user/amagnan/HGCAL/TiCLv4 --pT=${pT} --Eta=${eta} --PtEta=pt${pT}_eta${eta};  done
+#for pT in 5 10 20 50 100 150; do python3 submitProdStep.py -S --nRuns=10 -n 1000 -d SinglePhotons -w 24805.0_SingleGammaPt35+2026D98/ -o ProdTiclv4 -e /eos/cms/store/user/amagnan/HGCAL/TiCLv4 --pT=${pT} --PtEta=pt${pT})randEta;  done
 
-#Front of HGCAL - fixed pT/eta
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12345$run -d CloseByPhotons -w 23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/ --config3=../step3_EMiterOnly_noPU.py -o ProdTiclEM -e /eos/cms/store/user/amagnan/HGCAL/TiCL/EMonly --minpT=4.95 --maxpT=5.05 --minEta=1.69 --maxEta=1.71 --minz=320 --PtEta=pt5_eta17; done
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12345$run -d CloseByPhotonsWithPU -w 23493.0_CloseByParticleGun+2026D49PU+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTriggerPU+RecoGlobalPU+HARVESTGlobalPU/ --skip-step1 --config2=step2_DIGI_L1TrackTrigger_L1_DIGI2RAW_HLT_PU.py --config3=../step3_EMiterOnly_PU.py  -o ProdTiclEM -E /eos/cms/store/user/amagnan/HGCAL/TiCL/EMonly/CloseByPhotons -e /eos/cms/store/user/amagnan/HGCAL/TiCL/EMonly  --PtEta=pt5_eta17 ; done
-#for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s 12346$run -d CloseByPhotonsFromVtx -w 23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/ --config3=../step3_EMiterOnly_noPU.py -o ProdTiclEM -e /eos/cms/store/user/amagnan/HGCAL/TiCL/EMonly --minpT=4.95 --maxpT=5.05 --minEta=1.69 --maxEta=1.71 --minz=0 --PtEta=pt5_eta17; done
-
-#for eta in 17 19 21 23 25 27; do for pT in 3 5 10 15 20 30 40 50 75 100 150 200; do for run in `seq 0 9`; do python submitProdStep.py -r $run -n 100 -s ${pT}${eta}${run} -d CloseByPhotons -w 23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/ --config3=../step3_EMiterOnly_noPU.py -o ProdTiclEMNew -e /eos/cms/store/user/amagnan/HGCAL/TiCL/EMonlyNew --pT=${pT} --Eta=${eta} --minz=320 --PtEta=pt${pT}_eta${eta} -R 0;  done; done; done
+#--config3=../step3_EMiterOnly_noPU.py
 
 #step TiCL only -- new sub example
 #pions
-#for eta in 21; do for pT in 10 20 50 100 150 200; do python submitProdStep.py --nRuns=10 -n 0 -d ChargedPionsFromVtx --skip-step1  --skip-step2  --skip-step3 --configTicl=step3ticl_noPU.py  -o ProdTiclAll/ -e /eos/cms/store/user/amagnan/HGCAL/TiCL/ -E /eos/cms/store/user/amagnan/HGCAL/TiCL/ChargedPionsFromVtx --PtEta=pt${pT}_eta${eta} ; done; done
+#for eta in 21; do for pT in 10 20 50 100 150 200; do python3 submitProdStep.py --nRuns=10 -n 0 -d ChargedPionsFromVtx --skip-step1  --skip-step2  --skip-step3 --configTicl=step3ticl_noPU.py  -o ProdTiclAll/ -e /eos/cms/store/user/amagnan/HGCAL/TiCL/ -E /eos/cms/store/user/amagnan/HGCAL/TiCL/ChargedPionsFromVtx --PtEta=pt${pT}_eta${eta} ; done; done
 
 import subprocess
 import os,sys
 import optparse
 import argparse
-import commands
 import math
 import random
 import numpy as np
@@ -42,11 +34,11 @@ parser = optparse.OptionParser(usage)
 parser.add_option(      '--nRuns'       ,    dest='nRuns'              , help='number of run, 0-indexed'     , default=-1 ,      type=int)
 parser.add_option('-n', '--nevts'       ,    dest='nevts'              , help='number of events to generate' , default=100,      type=int)
 parser.add_option('-s', '--randomSeed'  ,    dest='randomSeed'         , help='random seed for generator process' , default=0,    type=int)
-parser.add_option('-d', '--datatype'    ,    dest='datatype'           , help='data type or particle to shoot', default='CloseByPhotons')
-parser.add_option('-w', '--workflow'    ,    dest='workflow'           , help='Directory of workflow from runTheMatrix', default='23293.0_CloseByParticleGun+2026D49+CloseByParticle_Photon_ERZRanges_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal')
-parser.add_option('--config1'      ,  dest='config1'           , help='Step1 config file to run', default='CloseByParticle_Photon_ERZRanges_cfi_GEN_SIM.py')
+parser.add_option('-d', '--datatype'    ,    dest='datatype'           , help='data type or particle to shoot', default='SinglePhotons')
+parser.add_option('-w', '--workflow'    ,    dest='workflow'           , help='Directory of workflow from runTheMatrix', default='24805.0_SingleGammaPt35+2026D98')
+parser.add_option('--config1'      ,  dest='config1'           , help='Step1 config file to run', default='../SingleParticle_pythia8_cfi_GEN_SIM.py')
 parser.add_option('--config2'      ,  dest='config2'           , help='Step2 config file to run', default='step2_DIGI_L1TrackTrigger_L1_DIGI2RAW_HLT.py')
-parser.add_option('--config3'      ,  dest='config3'           , help='Step3 config file to run', default='step3_RAW2DIGI_L1Reco_RECO_RECOSIM_PAT_VALIDATION_DQM.py')
+parser.add_option('--config3'      ,  dest='config3'           , help='Step3 config file to run', default='step3_RAW2DIGI_RECO_RECOSIM_PAT_VALIDATION_DQM.py')
 parser.add_option('--configTicl'      ,  dest='configTicl'           , help='Step3 config file to rerun just TICL', default='step3ticl_noPU.py')
 parser.add_option('-o', '--out'         ,    dest='out'                , help='output directory'             , default=os.getcwd() )
 parser.add_option('-e', '--eosout'         ,    dest='eosout'                , help='eos path to save root file to EOS',         default='')
@@ -57,22 +49,17 @@ parser.add_option('--skip-step2'   ,    action="store_true",  dest='skipStep2'  
 parser.add_option('--skip-step3'   ,    action="store_true",  dest='skipStep3'           , help='Skip third step: copy step3 file from eos and rerun TICL.')
 parser.add_option('-G', '--gridProxy',  action="store_true",  dest='gridProxy'           , help='initialise grid proxy')
 
-parser.add_option('--Eval'  ,    dest='Eval'         , help='Energy for generator process' , default=0,    type=float)
-parser.add_option('--pT'  ,    dest='pT'         , help='pT for generator process' , default=5,    type=float)
-parser.add_option('--minEn'  ,    dest='minEn'         , help='Minimum En for generator process' , default=4.95,    type=float)
-parser.add_option('--maxEn'  ,    dest='maxEn'         , help='Maximum En for generator process' , default=5.05,    type=float)
+parser.add_option('--pT'  ,    dest='pT'         , help='pT for generator process' , default=-1,    type=float)
+parser.add_option('--minPt'  ,    dest='minPt'         , help='Minimum En for generator process' , default=4.95,    type=float)
+parser.add_option('--maxPt'  ,    dest='maxPt'         , help='Maximum En for generator process' , default=5.05,    type=float)
 parser.add_option('--Eta'  ,    dest='Eta'         , help='Eta*10 for generator process' , default=17,    type=float)
 parser.add_option('--Phi'  ,    dest='Phi'         , help='Phi in degrees for generator process' , default=0,    type=float)
-parser.add_option('--minEta'  ,    dest='minEta'         , help='Minimum Eta for generator process' , default=1.69,    type=float)
-parser.add_option('--maxEta'  ,    dest='maxEta'         , help='Maximum Eta for generator process' , default=1.71,    type=float)
+parser.add_option('--minEta'  ,    dest='minEta'         , help='Minimum Eta for generator process' , default=1.4,    type=float)
+parser.add_option('--maxEta'  ,    dest='maxEta'         , help='Maximum Eta for generator process' , default=2.9,    type=float)
 parser.add_option('--minPhi'  ,    dest='minPhi'         , help='Minimum Phi for generator process' , default=-3.14159265359,    type=float)
 parser.add_option('--maxPhi'  ,    dest='maxPhi'         , help='Maximum Phi for generator process' , default=3.14159265359,    type=float)
-parser.add_option('--minz'  ,    dest='minz'         , help='Minimum z for generator process' , default=320,    type=float)
-parser.add_option('--delta'  ,    dest='delta'         , help='Delta between closeby particles, in cm' , default=3,    type=float)
 parser.add_option('--pdgid'  ,    dest='pdgid'         , help='PDG ID generator process' , default=22,    type=int)
-parser.add_option('--nparts'  ,    dest='nparts'         , help='number of particles for generator process' , default=2,    type=int)
 parser.add_option('--PtEta'         ,    dest='PtEta'                , help='Pt-eta string path to save root file to EOS',         default='pt5_eta17')
-parser.add_option('--EnEta'         ,    dest='EnEta'                , help='En-eta string path to save root file to EOS',         default='En50_eta17')
 
 (opt, args) = parser.parse_args()
 
@@ -80,7 +67,11 @@ isPU=False
 if 'WithPU' in opt.datatype:
     isPU=True
 
-outDirSub='%s/%s/%s/%s'%(os.getcwd(),opt.out,opt.datatype,opt.EnEta)
+if (opt.pT>0):
+    opt.minPt=0.999*opt.pT
+    opt.maxPt=1.001*opt.pT
+    
+outDirSub='%s/%s/%s/%s'%(os.getcwd(),opt.out,opt.datatype,opt.PtEta)
 eosDir='%s/%s'%(opt.eosout,opt.datatype)
 eosDirIn='%s'%(opt.eosin)
 
@@ -155,21 +146,14 @@ scriptFile.write('cd %s/../\n'%(os.getcwd()))
 scriptFile.write('eval `scramv1 runtime -sh`\n')
 scriptFile.write('cd $localdir\n')
 
-outTag='_%s'%(opt.EnEta)
+outTag='_%s'%(opt.PtEta)
 if (opt.nRuns>=1) : 
     outTag='%s_run${Step}'%(outTag)
     
 if not opt.skipStep1:
-    #scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=%d minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minz=%3.3f\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.randomSeed,opt.minEn,opt.maxEn,opt.minEta,opt.maxEta,opt.minz))
     scriptFile.write('echo "-- Random seed is set to : " ${SEED} >> runJob.log\n')
-#    scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f minz=%3.3f pdgid=%d delta=%3.3f nParts=%d" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.pT*0.99,opt.pT*1.01,opt.Eta*0.0994,opt.Eta*0.1006,opt.minPhi,opt.maxPhi,opt.minz,opt.pdgid,opt.delta,opt.nparts))
-
-    if (opt.Eval>0):
-        scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} E=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f minz=%3.3f pdgid=%d delta=%3.3f nParts=%d" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.Eval,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.minz,opt.pdgid,opt.delta,opt.nparts))
-        scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} E=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f minz=%3.3f pdgid=%d delta=%3.3f nParts=%d\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.Eval,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.minz,opt.pdgid,opt.delta,opt.nparts))
-    else: 
-        scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f minz=%3.3f pdgid=%d delta=%3.3f nParts=%d" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minEn,opt.maxEn,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.minz,opt.pdgid,opt.delta,opt.nparts))
-        scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f minz=%3.3f pdgid=%d delta=%3.3f nParts=%d\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minEn,opt.maxEn,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.minz,opt.pdgid,opt.delta,opt.nparts))
+    scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minpT=%3.3f maxpT=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minPt,opt.maxPt,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid))
+    scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minpT=%3.3f maxpT=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minPt,opt.maxPt,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid))
 
 elif not opt.skipStep2:
     scriptFile.write('%s %s/step1%s.root step1.root\n'%(eoscp,eosDirIn,outTag))
@@ -238,7 +222,7 @@ else:
 scriptFile.write('echo "All done"\n')
 scriptFile.close()
 
-print 'Getting proxy'
+print('Getting proxy')
 subprocess.check_output(['voms-proxy-info','-path'])
 
 proxyPath=os.popen('voms-proxy-info -path')
