@@ -1,8 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Eras.Era_Phase2C9_cff import Phase2C9
+from Configuration.Eras.Era_Phase2C17I13M9_cff import Phase2C17I13M9
 
-process = cms.Process('TICL',Phase2C9)
+process = cms.Process('TICL',Phase2C17I13M9)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -10,7 +10,7 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
-process.load('Configuration.Geometry.GeometryExtended2026D49Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2026D98Reco_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.load('Configuration.StandardSequences.L1Reco_cff')
@@ -84,25 +84,29 @@ process.source = cms.Source("PoolSource",
 process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 #process.source.skipEvents = cms.untracked.uint32(38)
 
-
 process.options = cms.untracked.PSet(
-    FailPath = cms.untracked.vstring(),
     IgnoreCompletely = cms.untracked.vstring(),
     Rethrow = cms.untracked.vstring(),
-    SkipEvent = cms.untracked.vstring(),
+    TryToContinue = cms.untracked.vstring(),
+    accelerators = cms.untracked.vstring('*'),
     allowUnscheduled = cms.obsolete.untracked.bool,
     canDeleteEarly = cms.untracked.vstring(),
+    deleteNonConsumedUnscheduledModules = cms.untracked.bool(True),
+    dumpOptions = cms.untracked.bool(False),
     emptyRunLumiMode = cms.obsolete.untracked.string,
     eventSetup = cms.untracked.PSet(
         forceNumberOfConcurrentIOVs = cms.untracked.PSet(
             allowAnyLabel_=cms.required.untracked.uint32
         ),
-        numberOfConcurrentIOVs = cms.untracked.uint32(1)
+        numberOfConcurrentIOVs = cms.untracked.uint32(0)
     ),
     fileMode = cms.untracked.string('FULLMERGE'),
     forceEventSetupCacheClearOnNewRun = cms.untracked.bool(False),
+    holdsReferencesToDeleteEarly = cms.untracked.VPSet(),
     makeTriggerResults = cms.obsolete.untracked.bool,
-    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
+    modulesToCallForTryToContinue = cms.untracked.vstring(),
+    modulesToIgnoreForDeleteEarly = cms.untracked.vstring(),
+    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(0),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
     numberOfStreams = cms.untracked.uint32(0),
     numberOfThreads = cms.untracked.uint32(1),
@@ -130,9 +134,9 @@ process.FEVTTICLoutput = cms.OutputModule("PoolOutputModule",
     outputCommands = cms.untracked.vstring( (
         'drop *', 
         'keep *_HGCalRecHit_*_*', 
-        'keep recoCaloClusters_hgcalLayerClusters_*_*', 
-        'keep *_hgcalLayerClusters_timeLayerCluster_*', 
-        'keep *_hgcalLayerClusters_InitialLayerClustersMask_*',
+        'keep *_hgcalMergeLayerClusters_*_*', 
+#        'keep *_hgcalLayerClusters_timeLayerCluster_*', 
+#        'keep *_hgcalLayerClusters_InitialLayerClustersMask_*',
         'keep *_hgcalMultiClusters_*_*', 
         'keep *_iterHGCalMultiClusters_*_*',
         'keep *_ticlTracksters*_*_*', 
@@ -162,7 +166,7 @@ process.FEVTTICLoutput = cms.OutputModule("PoolOutputModule",
 
 #process.RandomNumberGeneratorService.restoreStateLabel=cms.untracked.string("randomEngineStateProducer")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic_T15', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic_T25', '')
 
 #rerun default iterations
 from RecoHGCal.TICL.tracksterSelectionTf_cfi import *
@@ -181,11 +185,12 @@ process.tracksterSelectionTf = cms.ESProducer(
 )
 
 
-from RecoHGCal.TICL.TrkEMStep_cff import *
-from RecoHGCal.TICL.EMStep_cff import *
-from RecoHGCal.TICL.TrkStep_cff import *
-from RecoHGCal.TICL.HADStep_cff import *
+#from RecoHGCal.TICL.TrkEMStep_cff import *
+#from RecoHGCal.TICL.EMStep_cff import *
+#from RecoHGCal.TICL.TrkStep_cff import *
+#from RecoHGCal.TICL.HADStep_cff import *
 #from RecoHGCal.TICL.MIPStep_cff import *
+from RecoHGCal.TICL.CLUE3DHighStep_cff import *
 
 #ticlTrackstersTrkEM.algo_verbosity = 5
 #ticlTrackstersEM.algo_verbosity = 5
@@ -193,12 +198,13 @@ from RecoHGCal.TICL.HADStep_cff import *
 #ticlTrackstersHAD.algo_verbosity = 5
 
 #make several TiCL iterations
-process.load('TiclProduction.Configuration.myDUMMYiterations_cff')
-process.load('TiclProduction.Configuration.myEMiterations_cff')
-process.load('TiclProduction.Configuration.myHADiterations_cff')
-process.load('TiclProduction.Configuration.myTRKiterations_cff')
+#process.load('TiclProduction.Configuration.myDUMMYiterations_cff')
+#process.load('TiclProduction.Configuration.myEMiterations_cff')
+#process.load('TiclProduction.Configuration.myHADiterations_cff')
+#process.load('TiclProduction.Configuration.myTRKiterations_cff')
 
-process.load('TiclProduction.Configuration.mySIMiterations_cff')
+
+#process.load('TiclProduction.Configuration.mySIMiterations_cff')
 
 #cms.Path(
 #HGCalUncalibRecHit,HGCalRecHit,hgcalRecHitMapProducer,
@@ -216,19 +222,34 @@ process.load('TiclProduction.Configuration.mySIMiterations_cff')
 
 #process.sim_path = cms.Sequence(process.sim_task)
 
+
+from RecoLocalCalo.HGCalRecProducers.hgcalLayerClusters_cff import *
+process.hgcalLayerClustersEE.plugin.doDensity=cms.bool(True)
+process.hgcalLayerClustersHSi.plugin.doDensity=cms.bool(True)
+process.hgcalLayerClustersHSci.plugin.doDensity=cms.bool(True)
+
+process.make_new_lc = cms.Task(
+    process.hgcalLayerClustersEE,
+    process.hgcalLayerClustersHSi,
+    process.hgcalLayerClustersHSci,
+    process.hgcalMergeLayerClusters
+    )
+
 process.tile_task = cms.Task(process.trackdnn_source,process.ticlLayerTileProducer)
 
 process.def_ticl = cms.Task(
-    process.ticlTrkEMStepTask,process.ticlEMStepTask,
-    process.ticlTrkStepTask,process.ticlHADStepTask
+    #process.ticlTrkEMStepTask,process.ticlEMStepTask,
+    #process.ticlTrkStepTask,process.ticlHADStepTask
+    process.ticlCLUE3DHighStepTask,
 )
 
 
 process.ticl_seq = cms.Sequence(
-    process.sim_task,
+#    process.sim_task,
+    process.make_new_lc,
     process.tile_task,
 #    process.dummy_task,
-    process.em_task,
+#    process.em_task,
 #    process.had_task,
 #    process.trk_task,
     process.def_ticl,
