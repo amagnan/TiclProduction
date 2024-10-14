@@ -36,7 +36,7 @@ parser.add_option('-n', '--nevts'       ,    dest='nevts'              , help='n
 parser.add_option('-s', '--randomSeed'  ,    dest='randomSeed'         , help='random seed for generator process' , default=0,    type=int)
 parser.add_option('-d', '--datatype'    ,    dest='datatype'           , help='data type or particle to shoot', default='SinglePhotons')
 parser.add_option('-w', '--workflow'    ,    dest='workflow'           , help='Directory of workflow from runTheMatrix', default='24805.0_SingleGammaPt35+2026D98')
-parser.add_option('--config1'      ,  dest='config1'           , help='Step1 config file to run', default='../SingleParticle_pythia8_cfi_GEN_SIM.py')
+parser.add_option('--config1'      ,  dest='config1'           , help='Step1 config file to run', default='../CloseByParticle_Photon_ERZRanges_cfi_GEN_SIM.py')
 parser.add_option('--config2'      ,  dest='config2'           , help='Step2 config file to run', default='step2_DIGI_L1TrackTrigger_L1_DIGI2RAW_HLT.py')
 parser.add_option('--config3'      ,  dest='config3'           , help='Step3 config file to run', default='step3_RAW2DIGI_RECO_RECOSIM_PAT_VALIDATION_DQM.py')
 parser.add_option('--configTicl'      ,  dest='configTicl'           , help='Step3 config file to rerun just TICL', default='step3ticl_noPU.py')
@@ -50,16 +50,20 @@ parser.add_option('--skip-step3'   ,    action="store_true",  dest='skipStep3'  
 parser.add_option('-G', '--gridProxy',  action="store_true",  dest='gridProxy'           , help='initialise grid proxy')
 
 parser.add_option('--pT'  ,    dest='pT'         , help='pT for generator process' , default=-1,    type=float)
+parser.add_option('--minZ'  ,    dest='minZ'         , help='Minimum Zpos for generator process' , default=320,    type=float)
 parser.add_option('--minPt'  ,    dest='minPt'         , help='Minimum En for generator process' , default=4.95,    type=float)
 parser.add_option('--maxPt'  ,    dest='maxPt'         , help='Maximum En for generator process' , default=5.05,    type=float)
+parser.add_option('--minEn'  ,    dest='minEn'         , help='Minimum En for generator process' , default=4.95,    type=float)
+parser.add_option('--maxEn'  ,    dest='maxEn'         , help='Maximum En for generator process' , default=5.05,    type=float)
 parser.add_option('--Eta'  ,    dest='Eta'         , help='Eta*10 for generator process' , default=17,    type=float)
 parser.add_option('--Phi'  ,    dest='Phi'         , help='Phi in degrees for generator process' , default=0,    type=float)
-parser.add_option('--minEta'  ,    dest='minEta'         , help='Minimum Eta for generator process' , default=1.4,    type=float)
-parser.add_option('--maxEta'  ,    dest='maxEta'         , help='Maximum Eta for generator process' , default=2.9,    type=float)
+parser.add_option('--minEta'  ,    dest='minEta'         , help='Minimum Eta for generator process' , default=1.6,    type=float)
+parser.add_option('--maxEta'  ,    dest='maxEta'         , help='Maximum Eta for generator process' , default=2.8,    type=float)
 parser.add_option('--minPhi'  ,    dest='minPhi'         , help='Minimum Phi for generator process' , default=-3.14159265359,    type=float)
 parser.add_option('--maxPhi'  ,    dest='maxPhi'         , help='Maximum Phi for generator process' , default=3.14159265359,    type=float)
 parser.add_option('--pdgid'  ,    dest='pdgid'         , help='PDG ID generator process' , default=22,    type=int)
 parser.add_option('--PtEta'         ,    dest='PtEta'                , help='Pt-eta string path to save root file to EOS',         default='pt5_eta17')
+parser.add_option('--EnEta'         ,    dest='EnEta'                , help='En-eta string path to save root file to EOS',         default='En5_eta17')
 
 (opt, args) = parser.parse_args()
 
@@ -71,7 +75,7 @@ if (opt.pT>0):
     opt.minPt=0.999*opt.pT
     opt.maxPt=1.001*opt.pT
     
-outDirSub='%s/%s/%s/%s'%(os.getcwd(),opt.out,opt.datatype,opt.PtEta)
+outDirSub='%s/%s/%s/%s'%(os.getcwd(),opt.out,opt.datatype,opt.EnEta)
 eosDir='%s/%s'%(opt.eosout,opt.datatype)
 eosDirIn='%s'%(opt.eosin)
 
@@ -107,7 +111,7 @@ if not opt.skipStep1 :
 #export X509_USER_PROXY=/afs/cern.ch/user/${USER:0:1}/${USER}/x509up_u${UID} # if you plan to run skims with HTCondor
 
 if (opt.gridProxy) :
-    os.system('voms-proxy-init --valid 168:00')
+    os.system('voms-proxy-init --voms cms --valid 168:00')
 
 os.system('voms-proxy-info')
 
@@ -146,14 +150,14 @@ scriptFile.write('cd %s/../\n'%(os.getcwd()))
 scriptFile.write('eval `scramv1 runtime -sh`\n')
 scriptFile.write('cd $localdir\n')
 
-outTag='_%s'%(opt.PtEta)
+outTag='_%s'%(opt.EnEta)
 if (opt.nRuns>=1) : 
     outTag='%s_run${Step}'%(outTag)
     
 if not opt.skipStep1:
     scriptFile.write('echo "-- Random seed is set to : " ${SEED} >> runJob.log\n')
-    scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minpT=%3.3f maxpT=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minPt,opt.maxPt,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid))
-    scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minpT=%3.3f maxpT=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minPt,opt.maxPt,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid))
+    scriptFile.write('echo "cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d minz=%3.3f" >> runJob.log\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minEn,opt.maxEn,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid,opt.minZ))
+    scriptFile.write('cmsRun %s/%s/%s maxEvents=%d generatorRandomSeed=${SEED} minEn=%3.3f maxEn=%3.3f minEta=%3.3f maxEta=%3.3f minPhi=%3.3f maxPhi=%3.3f pdgid=%d minz=%3.3f\n'%(os.getcwd(),opt.workflow,opt.config1,opt.nevts,opt.minEn,opt.maxEn,opt.minEta,opt.maxEta,opt.minPhi,opt.maxPhi,opt.pdgid,opt.minZ))
 
 elif not opt.skipStep2:
     scriptFile.write('%s %s/step1%s.root step1.root\n'%(eoscp,eosDirIn,outTag))
